@@ -6,13 +6,17 @@ import com.example.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Future;
 
 @Service("userService")
 public class UserServiceImpl implements UserService {
@@ -48,7 +52,33 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> findAll() {
-        return userRepository.findAll();
+        try{
+            System.out.println("开始查询库表任务");
+            long start = System.currentTimeMillis();
+            List<User> all = userRepository.findAll();
+            long end = System.currentTimeMillis();
+            System.out.println("完成任务，总共耗时="+(end-start)+"毫秒");
+            return all;
+        }
+        catch (Exception e){
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    @Override
+    @Async
+    public Future<List<User>> findAsynAll() {
+        try{
+            System.out.println("开始查询库表任务");
+            long start = System.currentTimeMillis();
+            List<User> all = userRepository.findAll();
+            long end = System.currentTimeMillis();
+            System.out.println("完成任务，总共耗时="+(end-start)+"毫秒");
+            return new AsyncResult<List<User>>(all);
+        }
+        catch (Exception e){
+            return new AsyncResult<List<User>>(null);
+        }
     }
 
     @Override

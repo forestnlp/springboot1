@@ -26,6 +26,8 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -175,4 +177,43 @@ public class Springboot1ApplicationTests {
         moodProducer.sendMessage(activeMQQueue,"这是我的一条消息哦！");
     }
 
+    @Test
+    public void testActiveMqAsynSave(){
+        Mood mood = new Mood();
+        mood.setId(2);
+        mood.setContent("这是一条通过mq发送后，由consumer写库的记录");
+        mood.setUser_id(2);
+        mood.setPraiseNum(10);
+        mood.setPublishTime(new Date());
+        String s = moodService.asynSave(mood);
+        System.out.println("通过moodService 异步存储："+s+",mood="+mood);
+    }
+
+    @Test
+    public void testSyncTime(){
+        long start = System.currentTimeMillis();
+        List<User> all = userService.findAll();
+        List<User> all1 = userService.findAll();
+        List<User> all2 = userService.findAll();
+        long end = System.currentTimeMillis();
+        int size = all.size()+all1.size()+all2.size();
+        System.out.println("同步任务总共耗时="+(end-start)+"毫秒"+",总共取得数据记录:"+size+"条");
+    }
+
+    @Test
+    public void testAsyncTime() throws InterruptedException, ExecutionException {
+        long start = System.currentTimeMillis();
+        Future<List<User>> asynAll = userService.findAsynAll();
+        Future<List<User>> asynAll1 = userService.findAsynAll();
+        Future<List<User>> asynAll2 = userService.findAsynAll();
+        while (true){
+            if(asynAll.isDone()&&asynAll1.isDone()&&asynAll2.isDone()){
+                break;
+            }
+            Thread.sleep(10);
+        }
+        long end = System.currentTimeMillis();
+        int size = asynAll.get().size()+asynAll1.get().size()+asynAll2.get().size();
+        System.out.println("异步任务总共耗时="+(end-start)+"毫秒"+",总共取得数据记录:"+size+"条");
+    }
 }

@@ -26,7 +26,7 @@ public class MailSendTask {
     @Autowired
     private UserService userService;
 
-    @Scheduled(cron = "*/60 * * * * *")
+   //@Scheduled(cron = "*/60 * * * * *")
     public void runbyexpression(){
         List<User> all = userService.findAll();
         if(all==null||all.size()<=0) return;

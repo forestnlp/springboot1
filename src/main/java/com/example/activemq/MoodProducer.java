@@ -1,5 +1,6 @@
 package com.example.activemq;
 
+import com.example.entity.Mood;
 import org.springframework.jms.core.JmsMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,10 @@ public class MoodProducer {
     private JmsMessagingTemplate jmsMessagingTemplate;
 
     public void sendMessage(Destination destination,final String message) {
+        jmsMessagingTemplate.convertAndSend(destination,message);
+    }
+
+    public void sendMessage(Destination destination,final Mood message) {
         jmsMessagingTemplate.convertAndSend(destination,message);
     }
 
