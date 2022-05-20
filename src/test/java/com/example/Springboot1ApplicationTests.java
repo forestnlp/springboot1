@@ -3,7 +3,9 @@ package com.example;
 import com.example.activemq.MoodProducer;
 import com.example.entity.Mood;
 import com.example.entity.User;
+import com.example.entity.UserAttachment;
 import com.example.service.MoodService;
+import com.example.service.UserAttachmentService;
 import com.example.service.UserMybatisService;
 import com.example.service.UserService;
 import org.apache.activemq.command.ActiveMQQueue;
@@ -49,6 +51,9 @@ public class Springboot1ApplicationTests {
 
     @Resource
     private MoodProducer moodProducer;
+
+    @Resource
+    private UserAttachmentService userAttachmentService;
 
     @Test
     public void mysqlTest(){
@@ -215,5 +220,15 @@ public class Springboot1ApplicationTests {
         long end = System.currentTimeMillis();
         int size = asynAll.get().size()+asynAll1.get().size()+asynAll2.get().size();
         System.out.println("异步任务总共耗时="+(end-start)+"毫秒"+",总共取得数据记录:"+size+"条");
+    }
+
+    @Test
+    public void testMongoDB() {
+        UserAttachment userAttachment = new UserAttachment();
+        userAttachment.setId("12");
+        userAttachment.setUserId("42");
+        userAttachment.setFileName("工作履历.docx");
+        UserAttachment save = userAttachmentService.save(userAttachment);
+        System.out.println(save);
     }
 }

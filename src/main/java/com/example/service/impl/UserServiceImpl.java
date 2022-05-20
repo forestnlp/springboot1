@@ -1,11 +1,14 @@
 package com.example.service.impl;
 
 import com.example.entity.User;
+import com.example.exception.BusinessException;
 import com.example.repository.UserRepository;
 import com.example.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
@@ -112,5 +115,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findByIdIn(Collection<Integer> ids) {
         return userRepository.findByIdIn(ids);
+    }
+
+    @Override
+    @Retryable(value = {BusinessException.class},maxAttempts = 5,backoff = @Backoff(delay = 5000,multiplier = 2))
+    public User findByNameAndPasswordRetry(String name, String password) {
+        System.out.println("[findByNameAndPasswordRetry] 方法失败重试了");
+        throw new BusinessException();
     }
 }

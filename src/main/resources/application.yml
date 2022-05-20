@@ -27,6 +27,7 @@ spring:
     port: 6379
     password: redispass
 
+
   thymeleaf:
     mode: HTML5
     encoding: UTF-8
@@ -52,6 +53,10 @@ spring:
       enabled: false
     packages:
       trust-all: true
+
+  data:
+    mongodb:
+      uri: mongodb://192.168.226.131:27017/local
 
 logging:
   config: classpath:log4j2.xml

@@ -22,4 +22,7 @@ public interface UserService {
     List<User> findByNameLike(String name);
 
     List<User> findByIdIn(Collection<Integer> ids);
+
+    //retry
+    User findByNameAndPasswordRetry(String name,String password);
 }
