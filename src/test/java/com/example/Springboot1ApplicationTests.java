@@ -1,6 +1,7 @@
 package com.example;
 
 import com.example.activemq.MoodProducer;
+import com.example.config.MyProperties;
 import com.example.entity.Mood;
 import com.example.entity.User;
 import com.example.entity.UserAttachment;
@@ -230,5 +231,15 @@ public class Springboot1ApplicationTests {
         userAttachment.setFileName("工作履历.docx");
         UserAttachment save = userAttachmentService.save(userAttachment);
         System.out.println(save);
+    }
+
+    @Resource
+    MyProperties myProperties;
+    @Test
+    public void testMyProperties(){
+        System.out.println(myProperties.getCnnModel());
+        System.out.println(myProperties.getRnnModel());
+        System.out.println(myProperties.getRandomRange());
+        System.out.println(myProperties.getRandomUuid());
     }
 }
